@@ -87,6 +87,55 @@ def create_sample():
     artist.insert()
     casting.insert()
 
+    movie = Movie(
+        title='Kungfu Panda',
+        genre='Animation',
+        released_year=2008,
+        duration_mins=89
+    )
+
+
+    artist = Artist(
+        first_name ='Jack',
+        last_name ='Black',
+        gender="male",
+        dateofbirth="13-07-1976",
+    )
+
+    casting = Casting(
+        actor_id=3,
+        movie_id=3,
+        name_of_role="Po",
+    )
+    movie.insert()
+    artist.insert()
+    casting.insert()
+
+    movie = Movie(
+        title='My Fair Lady',
+        genre='Classics',
+        released_year=1966,
+        duration_mins=122
+    )
+
+
+    artist = Artist(
+        first_name ='Audrey',
+        last_name ='Hepburn',
+        gender="female",
+        dateofbirth="21-02-1956",
+    )
+
+    casting = Casting(
+        actor_id=4,
+        movie_id=4,
+        name_of_role="Eliza Doolittle",
+    )
+    movie.insert()
+    artist.insert()
+    casting.insert()
+
+
 """
 Artist
 

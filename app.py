@@ -83,9 +83,9 @@ def create_app(test_config=None):
   def home():
     return render_template("home.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
 
-  # @app.route("/login2")
-  # def login2():
-  #   return redirect(f"https://{AUTH0_DOMAIN}/authorize?audience={API_AUDIENCE}&response_type=token&client_id={YOUR_CLIENT_ID}&redirect_uri={YOUR_CALLBACK_URI}")
+  @app.route("/login2")
+  def login2():
+    return redirect(f"https://{AUTH0_DOMAIN}/authorize?audience={API_AUDIENCE}&response_type=token&client_id={YOUR_CLIENT_ID}&redirect_uri={YOUR_CALLBACK_URI}")
 
 
   @app.route("/actors")
