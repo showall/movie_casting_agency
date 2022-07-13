@@ -14,8 +14,8 @@ from flask_migrate import Migrate
 
 database_name = 'casting_agency'
 database_name = DB_NAME
-database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',DB_NAME)
-#database_path = '{}'.format(DB_NAME_HEROKU)
+#database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',DB_NAME)
+database_path = '{}'.format(DB_NAME_HEROKU)
 
 
 db = SQLAlchemy()

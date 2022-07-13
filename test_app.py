@@ -25,8 +25,8 @@ class TestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "casting_agency_test"
-        self.database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',self.database_name)
-        #self.database_path = '{}'.format(DB_NAME_HEROKU,DB_NAME)
+        #self.database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',self.database_name)
+        self.database_path = '{}'.format(DB_NAME_HEROKU,DB_NAME)
         setup_db(self.app, self.database_path)
         # binds the app to the current context
         with self.app.app_context():
