@@ -12,15 +12,14 @@ from models import setup_db, create_sample, Movie, Artist, Casting
 from auth import AuthError, requires_auth, get_token_auth_header
 from settings import AUTH0_DOMAIN,ALGORITHMS,API_AUDIENCE, YOUR_CLIENT_ID, YOUR_CALLBACK_URI, YOUR_CLIENT_SECRET, APP_SECRET_KEY
 
-def create_app(test_config=None):
+def create_app(test_config=None, test=False):
   # create and configure the app
   app = Flask(__name__)
   CORS(app,support_credentials=True)
-  setup_db(app)
+  setup_db(app,test=test)
   #create_sample()
   app.secret_key = APP_SECRET_KEY
   oauth = OAuth(app)
-
   oauth.register(
       "auth0",
       client_id=YOUR_CLIENT_ID,

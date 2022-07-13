@@ -2,6 +2,7 @@ import os
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request, abort, jsonify, redirect, render_template, session, url_for
 from sqlalchemy import Column, String, Integer, create_engine
 from app import create_app
 from models import setup_db, Movie, Artist, Casting, create_sample
@@ -22,19 +23,21 @@ class TestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        self.app = create_app()
+        #self.app = create_app()
+        self.app = create_app(test=True)       
         self.client = self.app.test_client
         self.database_name = "casting_agency_test"
-        #self.database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',self.database_name)
-        self.database_path = '{}'.format(DB_NAME_HEROKU,DB_NAME)
-        setup_db(self.app, self.database_path)
+        self.database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',self.database_name)
+        #self.database_path = '{}'.format(DB_NAME_HEROKU,DB_NAME)
+        setup_db(self.app, self.database_path,test=True)
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
             self.db.init_app(self.app)
             # create all tables
-            self.db.create_all()
-            create_sample()
+            #self.db.drop_all()   
+            #self.db.create_all()
+        create_sample()
     
     def tearDown(self):
         """Executed after reach test"""

@@ -52,6 +52,8 @@ Ensure Postgres is run in the backend. Create a database to use, which is to be 
 $ heroku addons:create heroku-postgresql:hobby-dev --app [my-app-name]
 $ heroku config --app [my-app-name] # eg DATABASE_URL:
 # postgres://xjlhouchsdbnuw:0e9a708916e496be7136d0eda4c546253f1f5425ec041fd6e3efda3a1f819ba2@ec2-35-175-68-90.compute-1.amazonaws.com:5432/d3mrjpmsi4vvn1
+$ heroku run python manage.py db downgrade --app mycastingagency #to drop all tables/relations
+$ heroku run python manage.py db upgrade --app mycastingagency #to re-create all tables/relations
 ```
 
 ### Setup Auth0
@@ -111,10 +113,10 @@ Ensure the configuration .env file is filled up by changing `DB_NAME`, `DB_USER`
  if running on Heroku, fill in DB_`NAME_HEROKU` with the online Heroku addon postgres URL.
 
 ## RBAC testing
-To test for RBAC, you may run Casting_Agency.postman_collection.json in POSTMAN
+To test for RBAC, you may run Casting_Agency_Local.postman_collection.json (local) or Casting_Agency_Heroku.postman_collection.json (Heroku) in POSTMAN
 
 ## API endpoint test
-To run test:
+To run unitest on endpoints:
 
 ```bash
 $ python test_app.py
@@ -137,54 +139,25 @@ $ flask run
 
 **_https://mycastingagency.herokuapp.com/**
 
-
-
-
-
-
-
-Running this project locally means that it can´t access `Herokus` env variables.
-To fix this, you need to edit a few informations in `config.py`, so it can
-correctly connect to a local database
-
-3. Change database config so it can connect to your local postgres database
-- Open `config.py` with your editor of choice. 
-- Here you can see this dict:
- ```python
-database_setup = {
-    "database_name_production" : "agency",
-    "user_name" : "postgres", # default postgres user name
-    "password" : "testpassword123", # if applicable. If no password, just type in None
-    "port" : "localhost:5432" # default postgres port
-}
-```
-`
-
-4. Setup Auth0
-If you only want to test the API (i.e. Project Reviewer), you can
-simply take the existing bearer tokens in `config.py`.
-
-If you already know your way around `Auth0`, just insert your data 
-into `config.py` => auth0_config.
-
-FYI: Here are the steps I followed to enable [authentification](#authentification).
-
-## API Documentation
-<a name="api"></a>
-
-
 ### Authentification
 
-
+For authentication, include `Authorization` key to the header of the request.
+The key is the `Bearer` token generated from Auth0 prepended by the string "Bearer "    
+example ; 
+```
+header =  
+{
+    "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkZDS05mSVkzcGQyYVBEV3dLZGtKaCJ9.eyJpc3MiOiJodHRwczovL3JhbmRvbXNpbHZlci51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjJjNDVkYWY2N2ZkZWEzNTZkMjhiYWQ0IiwiYXVkIjoicHJvamVjdCIsImlhdCI6MTY1NzYzNzgyMiwiZXhwIjoxNjU3NzI0MjIyLCJhenAiOiJhNkdOWDhpZnBPcldvdnU5TmFrVXA0U3h6MGtxZEp1bCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiYWRkOmFjdG9ycyIsImFkZDpjYXN0aW5nIiwiYWRkOm1vdmllcyIsImRlbGV0ZTphY3RvcnMiLCJkZWxldGU6bW92aWVzIiwiZWRpdDphY3RvcnMiLCJlZGl0OmNhc3RpbmciLCJlZGl0Om1vdmllcyIsImdldDphY3RvcnMtZGV0YWlscyIsImdldDpjYXN0aW5nLWRldGFpbHMiLCJnZXQ6bW92aWVzLWRldGFpbHMiXX0.HmglCiFpo7eWRC8xZBrxBrAJk8arDFNss5n6nCAvlJzMKy7XK-M7GRC0adaXhDplR3oW_WqUOVi5b3tnToY6-RVSJf6cLZzNYJj7_nxNh-KGMaTGkQttZZp0hxfgm0TnVacbLGvbse0XfJ5jgjQw0Q8cvoN72RTljVqyXDH2WTCwCgWQEi1zI-EhUzgHn2B2Du1_NaiATfUuScO6SSjgwnQYsJr-TVZl6xW2XWYICl6ePY6mF0Pa2IDwcR2xQwByNkNpWrOoi5V8vT_Qwmm_P18fQLD0JXSV2y9Uvr14M7xPzZ5zcIwZ-wWksMtgwbMpUr3G8JXKhdnzYTIM-gfjIQ"
+}
+```
+For testing, change the BEARER_TOKEN_FULLACESS in the .env file.
+### API Documentation
 
 ### Available Endpoints
 
-
 #### GET Endpoints
 
-
 **GET /actors/<id>** Fetches all information of the actor of specific id.
-
 Example output:
 ```
 {
@@ -198,10 +171,10 @@ Example output:
         }
 }
 ```
+
 **GET /movies/<id>** Fetches all information of the movie of specific id.
-
+Example output:
 ```
-
 {
     "result": [
         {
@@ -215,9 +188,8 @@ Example output:
 ```
 
 **GET /casting/<id>** Fetches all information of the casting of specific id.
-
+Example output:
 ```
-
 {
     "result": [
         {
@@ -251,17 +223,16 @@ Example output:
 {
     "result": [
         {
-            "dateofbirth": "20-02-1970",
-            "first_name": "Chris",
-            "gender": "male",
-            "id": 3,
-            "last_name": "Hemsworth"
+            "actor_id": 1,
+            "movie_id": 1,
+            "role": "Stephen Strange"
         }
+    ]
 }
 ```
 
 **GET /movies** Fetches all information of all movies.
-
+Example output:
 ```
 {
     "result": [
@@ -277,41 +248,26 @@ Example output:
 
 #### DELETE Endpoint
 
-**DELETE /movies/id/delete**: Deletes a specific movie using the id of the movie.
-
+**DELETE /movies/id/delete**: Deletes a specific movie using the id of the movie - returns deleted id. 
+Example output:
 ```
 {
-    "result": [
-        {
-            "duration_mins": 99,
-            "genre": "mystery",
-            "id": 1,
-            "released_year": 2010,
-            "title": "Dr Strange"
-        }
+    "deleted": "5"
 }
 ```
 
-
-**DELETE /actors/id/delete**: Deletes a specified actor using the id of the actor.
-
-
-
+**DELETE /actors/id/delete**: Deletes a specified actor using the id of the actor- returns deleted id. 
+Example output:
+```
+{
+    "deleted": "5"
+}
+```
 
 #### POST Endpoint
 
-**POST /movies**: Sends a post request in order to add a new movie
-
-**POST /actors**: Sends a post request in order to add a actor
-
-**POST /casting**: Sends a post request in order to add a casting
-
-
-
-#### PATCH Endpoint
-
-**PATCH /movies/id**: Edit the details a specific movie using the id of the movie.
-
+**POST /movies**: Sends a post request in order to add a new movie - returns newly created entity. 
+Example output:
 ```
 {
     "result": [
@@ -325,26 +281,82 @@ Example output:
 }
 ```
 
+**POST /actors**: Sends a post request in order to add a actor- returns newly created entity. 
+Example output:
+```
+{
+    "result": [
+        {
+            "dateofbirth": "01-01-1980",
+            "first_name": "Robert",
+            "gender": "male",
+            "id": 2,
+            "last_name": "Downey"
+        }
+    ]
+}
+```
 
-**PATCH /actors/id**: Edit the details of a specified actor using the id of the actor.
+**POST /casting**: Sends a post request in order to add a casting - returns newly created entity. 
+Example output:
+```
+{
+    "result": [
+        {
+            "actor_id": 1,
+            "movie_id": 3,
+            "role": null
+        }
+    ]
+}
+```
 
-**PATCH /actors/id**: Edit the details of a specified actor using the id of the casting.
+#### PATCH Endpoint
 
+**PATCH /movies/id**: Edit the details a specific movie using the id of the movie- returns just edited entity. 
+Example output:
+```
+{
+    "result": [
+        {
+            "duration_mins": 99,
+            "genre": "mystery",
+            "id": 1,
+            "released_year": 2010,
+            "title": "Dr Strange"
+        }
+}
+```
 
+**PATCH /actors/id**: Edit the details of a specified actor using the id of the actor - returns just edited entity. 
+Example output:
+```
+{
+    "result": [
+        {
+            "dateofbirth": "01-01-1980",
+            "first_name": "Benedict",
+            "gender": "male",
+            "id": 1,
+            "last_name": "Cumberbatch"
+        }
+    ]
+}
+```
 
-
-
-
-
-
-
-
-
-
-
-# <a name="authentification-bearer"></a>
-### Auth0 to use existing API
-If you want to access the real, temporary API, bearer tokens for all 3 roles are included in the `config.py` file.
+**PATCH /casting/id**: Edit the details of a specified actor using the id of the casting - returns just edited entity. 
+Example output:
+```
+{
+    "result": [
+        {
+            "actor_id": 1,
+            "movie_id": 1,
+            "role": "Stephen Strange"
+        }
+    ]
+}
+```
 
 ## Existing Roles
 
@@ -360,14 +372,4 @@ They are 3 Roles with distinct permission sets:
   - PATCH /movies (edit:movies): Can edit existing Movies
 3. Exectutive Dircector (everything from Casting Director plus)
   - POST /movies (create:movies): Can create new Movies
-  - DELETE /movies (delete:movies): Can remove existing Motives from database
-
-In your API Calls, add them as Header, with `Authorization` as key and the `Bearer token` as value. Don´t forget to also
-prepend `Bearer` to the token (seperated by space).
-
-For example: (Bearer token for `Executive Director`)
-```js
-{
-    "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik16azVRVUk0TXpSR04wSXhOVU13TkRrME16QXdNMFpHTmtFMU1VWXdPRUpCTmpnMFJrVTBSZyJ9.eyJpc3MiOiJodHRwczovL2ZzbmQtbWF0dGhldy5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWU0N2VmYzc2N2YxYmEwZWJiNDIwMTYzIiwiYXVkIjoiTXVzaWMiLCJpYXQiOjE1ODE4NjI0NjksImV4cCI6MTU4MTg2OTY2OSwiYXpwIjoiVGh2aG9mdmtkRTQwYlEzTkMzSzdKdFdSSzdSMzFOZDciLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImNyZWF0ZTphY3RvcnMiLCJjcmVhdGU6bW92aWVzIiwiZGVsZXRlOmFjdG9ycyIsImRlbGV0ZTptb3ZpZXMiLCJlZGl0OmFjdG9ycyIsImVkaXQ6bW92aWVzIiwicmVhZDphY3RvcnMiLCJyZWFkOm1vdmllcyJdfQ.iScamWOFNx9pjiVZhsvPzDoRi6EraZaxWg-WMj80HNW_-dchkOymnKA7OOhPQ8svLc9-wViLlCT-ySnupZ-209cIBVHSA_slncSP-lzEM6NKbBmDEETTQ1oxv2jTH-JL72eLhyAWUsmSIZDmEab1hln1yWEN7mUnn0nZJfxCRCs89h5EGJzXS2v8PbAjq9Mu7wFsrioEMx_PGWzSM0r5WIrKBvpXRy0Jm-vssZl4M1akDHIL5Shcfp_Bfnarc2OLOMvdQVHVDEWhrbFSnfCENLDxkcmB18VnOedJAuY_C88YRUfY2wQAOPux8RVuqIb5KxTg4YP7kiDcBUKXEnhL9A"
-}
-```
+  - DELETE /movies (delete:movies): Can remove existing Movies from database

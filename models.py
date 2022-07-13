@@ -25,7 +25,7 @@ migrate = Migrate()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 """
-def setup_db(app, database_path=database_path):
+def setup_db(app, database_path=database_path,test=False):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
@@ -33,8 +33,9 @@ def setup_db(app, database_path=database_path):
     #migrate.init_app(app, db)
     migrate = Migrate(app, db)
     migrate.init_app(app, db)    
-    #db.drop_all()
-    #db.create_all()
+    if test == True:
+        db.drop_all()
+        db.create_all()
 
 
 def create_sample():
@@ -45,7 +46,6 @@ def create_sample():
         released_year=2022,
         duration_mins=200
     )
-
 
     artist = Artist(
         first_name ='Benedict',
@@ -117,7 +117,6 @@ def create_sample():
         released_year=1966,
         duration_mins=122
     )
-
 
     artist = Artist(
         first_name ='Audrey',
