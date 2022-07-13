@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, String, Integer, create_engine
 from app import create_app
 from models import setup_db, Movie, Artist, Casting, create_sample
-from settings import DB_NAME, DB_USER, DB_PASSWORD, BEARER_TOKEN_FULLACCESS
+from settings import DB_NAME, DB_USER, DB_PASSWORD, BEARER_TOKEN_FULLACCESS,DB_NAME_HEROKU
 
 
 executive_producer_auth_header = {
@@ -25,8 +25,8 @@ class TestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "casting_agency_test"
-        self.database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',self.database_name)
-
+        #self.database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',self.database_name)
+        self.database_path = '{}/{}'.format(DB_NAME_HEROKU,DB_NAME)
         setup_db(self.app, self.database_path)
         # binds the app to the current context
         with self.app.app_context():

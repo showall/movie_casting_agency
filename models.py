@@ -14,7 +14,7 @@ from settings import DB_NAME, DB_USER, DB_PASSWORD, DB_NAME_HEROKU
 database_name = 'casting_agency'
 database_name = DB_NAME
 #database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,DB_PASSWORD,'localhost:5432',DB_NAME)
-database_path = '{}/{}'.format(DB_NAME_HEROKU,DB_NAME)
+database_path = '{}'.format(DB_NAME_HEROKU)
 
 
 db = SQLAlchemy()
