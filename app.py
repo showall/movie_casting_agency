@@ -17,7 +17,7 @@ def create_app(test_config=None):
   app = Flask(__name__)
   CORS(app,support_credentials=True)
   setup_db(app)
-  create_sample()
+  #create_sample()
   app.secret_key = APP_SECRET_KEY
   oauth = OAuth(app)
 
@@ -41,6 +41,12 @@ def create_app(test_config=None):
       )
       return response
 
+
+  @app.route("/create-sample")
+  def generate_sample():
+      create_sample()
+      return jsonify({"Status" : "Samples Created"
+      })
 
   @app.route("/login")
   def login():
