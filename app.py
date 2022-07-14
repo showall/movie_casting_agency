@@ -1,6 +1,15 @@
 import os
 import json
-from flask import Flask, request, abort, jsonify, redirect, render_template, session, url_for
+from flask import (
+  Flask, 
+  request, 
+  abort, 
+  jsonify, 
+  redirect, 
+  render_template, 
+  session, 
+  url_for
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 import random
@@ -10,12 +19,20 @@ from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 from models import setup_db, create_sample, Movie, Artist, Casting
 from auth import AuthError, requires_auth, get_token_auth_header
-from settings import AUTH0_DOMAIN,ALGORITHMS,API_AUDIENCE, YOUR_CLIENT_ID, YOUR_CALLBACK_URI, YOUR_CLIENT_SECRET, APP_SECRET_KEY
+from settings import (
+  AUTH0_DOMAIN,
+  ALGORITHMS,
+  API_AUDIENCE, 
+  YOUR_CLIENT_ID, 
+  YOUR_CALLBACK_URI, 
+  YOUR_CLIENT_SECRET, 
+  APP_SECRET_KEY
+)
 
 def create_app(test_config=None, test=False):
   # create and configure the app
   app = Flask(__name__)
-  CORS(app,support_credentials=True)
+  CORS(app)
   setup_db(app,test=test)
   #create_sample()
   app.secret_key = APP_SECRET_KEY
@@ -57,8 +74,16 @@ def create_app(test_config=None, test=False):
   @app.route("/callback", methods=["GET", "POST"])
   def callback():
       token = oauth.auth0.authorize_access_token()
-      print(token)
+      resp = oauth.auth0.get('userinfo')
+      userinfo = resp.json()
       session["user"] = token
+      session['jwt_payload'] = userinfo
+      session['profile'] = {
+      'user_id': userinfo['sub'],
+      'name': userinfo['name'],
+      'picture': userinfo['picture']
+    }
+
       return redirect("/")
 
 
@@ -88,17 +113,18 @@ def create_app(test_config=None, test=False):
 
 
   @app.route("/actors")
-  @cross_origin()
+  @cross_origin() 
   @requires_auth('get:actors-details')
-  def retrieve_actors(jwt):
+  def retrieve_actors(token):
       artist = Artist.query.all()
       artist = [item.standard() for item in artist]
-      return jsonify(
-          {
-              "result": artist,
-          }
-      )
-
+      # return jsonify(
+      #     {
+      #         "result": artist,
+      #     }
+      # )
+      return render_template("home.html", session=session.get('user'), pretty=json.dumps(artist))
+      
   @app.route("/movies")
   @cross_origin()  
   @requires_auth('get:movies-details')
@@ -161,6 +187,7 @@ def create_app(test_config=None, test=False):
             }
         )
     except Exception as e:
+      print(e)
       abort(404)
 
 
@@ -188,6 +215,7 @@ def create_app(test_config=None, test=False):
               movie.duration_mins = duration_mins
             movie.update()
           except Exception as e:
+              print(e)
               abort(422)
         return jsonify(
             {
@@ -202,6 +230,7 @@ def create_app(test_config=None, test=False):
             }
         )
     except Exception as e:
+      print(e)
       abort(404)
     
 
@@ -278,6 +307,7 @@ def create_app(test_config=None, test=False):
         movie = Movie(title,genre,released_year,duration_mins)
         movie.insert()
       except Exception as e:
+          print(e)
           abort(422)
       return jsonify(
           {

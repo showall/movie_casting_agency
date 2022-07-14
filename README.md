@@ -40,7 +40,7 @@ We recommend working within a virtual environment whenever using Python for proj
 Once you have your virtual environment setup and running, install dependencies by naviging to the `/backend` directory and running:
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 This will install all of the required packages we selected within the `requirements.txt` file.
@@ -373,3 +373,93 @@ They are 3 Roles with distinct permission sets:
 3. Exectutive Dircector (everything from Casting Director plus)
   - POST /movies (create:movies): Can create new Movies
   - DELETE /movies (delete:movies): Can remove existing Movies from database
+
+  ## To deploy on Heroku
+
+1. Procfile
+
+You should have a Procfile, a text file in the root directory of your application, to explicitly declare what command should be executed to start your app. We'll be deploying our applications using the Gunicorn webserver. Therefore, in our case, the Procfile text file will contain the command to start the app using the Gunicorn
+```
+    web: gunicorn app:APP
+```
+2. runtime.txt
+
+A runtime.txtspecifiies which exact Python version will be used. Whereas, a requirements.txt is used by Python’s dependency manager, Pip
+
+3. Database migration
+
+A manage.py file is included in the repository. Ensure you have run the following before migration. 
+
+'''
+python manage.py db init
+python manage.py db migrate
+python manage.py db upgrade
+
+'''
+4. Before deploying ensure that you have installed Heroku on the command line and have an account created. 
+```
+# Install, if Heroku as Standalone
+curl https://cli-assets.heroku.com/install.sh | sh
+
+```
+To verify 
+```
+heroku --version
+which heroku
+
+```
+Once you have the Heroku CLI you can start to run Heroku command. Next, log into heroku with the following command
+```
+heroku login -i
+```
+Heroku asks for your account email address and password, which you type into the terminal and press enter.
+
+5. To deploy, navigate back to the project directory and run. 
+
+```
+heroku create [my-app-name] --buildpack heroku/python
+
+```
+where, [my-app-name] is a unique name that nobody else on Heroku has already used. You have to define the build environment using the option --buildpack heroku/python The heroku create command will create a Git "remote" repository on Heroku cloud and a web address for accessing your web app. You can check that a remote repository was added to your git repository with the following terminal command
+
+```
+git remote -v
+
+```
+
+6. To Add PostgresSQL addon for the database
+
+Heroku has an addon for apps for a postgresql database instance. Run this code in order to create your database and connect it to your application
+```
+heroku addons:create heroku-postgresql:hobby-dev --app [my-app-name]
+```
+
+In the command above,
+heroku-postgresql is the name of the addon that will create an empty Postgres database.
+hobby-dev on the other hand specifies the tier of the addon, in this case the free version which has a limit on the amount of data it will store, albeit fairly high.
+
+7. Configure the App
+
+After the database has been created, you would want to set up the Environment variables in the Heroku Cloud, specific to youor application. Run the following command to fix your DATABASE_URL configuration variable in Heroku.
+
+```
+heroku config --app [my-app-name]
+```
+Copy the DATABASE_URL generated from the step above, and update your local DATABASE_URL environment variable files.
+
+You may set the environment variables in the Heroku portal after you "create" your application. To save the environment variables in the Heroku, you can go to the Heroku dashboard >> Particular App >> Settings >> Reveal Config Vars section and save the variables and their values.
+
+8. You are now ready to push the latest changes: 
+```
+git add -A
+git status
+git commit -m "your message"
+git push heroku master
+```
+Whenever you make any changes to your application folder contents, you will have to commit your changes and push again. 
+
+9. Lastly, do not forget to migrate the latest version capture by flask-migrate to the database by running:
+
+heroku run python manage.py db upgrade --app [my-app-name]
+
+You online app is now ready to go. 

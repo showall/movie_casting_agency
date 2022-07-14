@@ -134,12 +134,29 @@ def create_sample():
     artist.insert()
     casting.insert()
 
+"""
+Artist
+
+"""
+class inheritedClassName(db.Model):
+    __abstract__ = True
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
 
 """
 Artist
 
 """
-class Artist(db.Model):
+class Artist(inheritedClassName):
     __tablename__ = 'artists'
 
     id = Column(Integer, primary_key=True)
@@ -155,17 +172,6 @@ class Artist(db.Model):
         self.gender = gender
         self.dateofbirth = dateofbirth
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
     def standard(self):
         return {
             'id': self.id,
@@ -179,7 +185,7 @@ class Artist(db.Model):
 Movie
 
 """
-class Movie(db.Model):
+class Movie(inheritedClassName):
     __tablename__ = 'movies'
 
     id = Column(Integer, primary_key=True)
@@ -195,17 +201,6 @@ class Movie(db.Model):
         self.released_year = released_year
         self.duration_mins = duration_mins
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
     def standard(self):
         return {
             'id': self.id,
@@ -215,7 +210,7 @@ class Movie(db.Model):
             "duration_mins" : self.duration_mins                        
             }
 
-class Casting(db.Model):  #association_table
+class Casting(inheritedClassName):  #association_table
     __tablename__ = 'casting'
 
     id = Column(Integer, primary_key=True)
@@ -227,16 +222,6 @@ class Casting(db.Model):  #association_table
         self.actor_id = actor_id
         self.movie_id = movie_id
         self.name_of_role = name_of_role       
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit() 
 
     def standard(self):
         return {

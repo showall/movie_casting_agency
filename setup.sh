@@ -1,3 +1,6 @@
 export DATABASE_URL="postgres://clxuoksoddazvg:ed00bd304863756cfb0dec7185f84375c2ba492a43112123b1bf8ec499d1b399@ec2-3-223-169-166.compute-1.amazonaws.com:5432/dau2ddlu87pri5"
 export EXCITED="true"
+export AUTH0_DOMAIN="randomsilver.us.auth0.com"
+export YOUR_CLIENT_SECRET="A5KMh5VLbdM70XVlHd5mx1lKRktQyqlxUdK1FIXLF_MaV6zJ6kH3GM4oDqak_Ua0"
+export API_AUDIENCE="project"
 echo "setup.sh script executed successfully!"
