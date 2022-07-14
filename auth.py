@@ -7,7 +7,7 @@ from settings import (
     AUTH0_DOMAIN,
     ALGORITHMS,
     API_AUDIENCE
-    }
+)
 
 AUTH0_DOMAIN = AUTH0_DOMAIN
 ALGORITHMS = ALGORITHMS
